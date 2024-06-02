@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t train-schedule .
+
+    - name: Test Docker image
+      run: docker run --rm train-schedule npm test
+
+    - name: Push Docker image to DockerHub
+      uses: docker/build-push-action@v2
+      with:
+        username: ${{ secrets.sunnyksa }}
+        password: ${{ secrets.Desunnex.1 }}
+        repository: yourusername/train-schedule
+        tag_with_ref: true
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout code
